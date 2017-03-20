@@ -1,0 +1,7 @@
+#!/bin/bash
+
+SCRIPT="
+const Basin = imports.main;
+Basin.main();"
+
+exec $DEBUG_COMMAND gjs -I @pkgdatadir@/src -c "$SCRIPT" "$@"

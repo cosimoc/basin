@@ -1,0 +1,38 @@
+{
+  "articles": [
+    {
+      "contentType": "application/pdf",
+      "source": "article.pdf",
+      "tags": [
+        "EknArticleObject",
+        "Category"
+      ],
+      "title": "Article",
+      "sequenceNumber": 1
+    }
+  ],
+  "images": [
+    {
+        "contentType": "image/jpg",
+        "license": "CC-BY 3.0",
+        "tags": ["EknMediaObject"],
+        "height": 531,
+        "width": 540,
+        "source": "image.jpg"
+    }
+  ],
+  "sets": [
+    {
+      "childTags": [
+        "Category"
+      ],
+      "tags": [
+        "EknSetObject",
+        "EknHomePageTag"
+      ],
+      "featured": true,
+      "thumbnail": "image.jpg",
+      "title": "Category"
+    }
+  ]
+}
