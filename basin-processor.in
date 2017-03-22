@@ -1,0 +1,7 @@
+#!/bin/bash
+
+SCRIPT="
+const Processor = imports.processor;
+Processor.main();"
+
+exec $DEBUG_COMMAND gjs -I @pkgdatadir@/tools -c "$SCRIPT" "$@"
