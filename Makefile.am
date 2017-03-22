@@ -53,10 +53,12 @@ CLEANFILES += \
 bin_SCRIPTS = \
 	basin \
 	basin-processor \
+	basin-helper \
 	$(NULL)
 
 EXTRA_DIST += \
 	$(js_sources) \
 	basin.in \
 	basin-processor.in \
+	basin-helper \
 	$(NULL)

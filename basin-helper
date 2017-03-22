@@ -1,0 +1,24 @@
+#!/bin/bash
+
+PATH_TO_JSON=/tmp/basin.json
+PATH_TO_FILES=$1
+PATH_TO_CONTENT=$2
+
+check_directory () {
+    if ! [ -d "$1" ]; then
+      echo "$1 not a directory" >&2
+      exit 1
+    fi
+}
+
+if [ "$#" -ne 2 ]; then
+  echo "usage: basin-helper <path_to_input_files> <path_to_ouput_content>" >&2
+  exit 1
+fi
+
+check_directory $PATH_TO_FILES
+check_directory $PATH_TO_CONTENT
+
+basin-processor $PATH_TO_FILES $PATH_TO_JSON || exit 1
+basin $PATH_TO_JSON $PATH_TO_CONTENT/output.shard || exit 1
+eminem regenerate $PATH_TO_CONTENT || exit 1
