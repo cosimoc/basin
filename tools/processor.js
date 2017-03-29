@@ -34,6 +34,29 @@ const Processor = new Lang.Class({
         };
     },
 
+    _create_video: function (path, title, mime_type, category, sequence) {
+        let license = '';
+        let width = 0;
+        let height = 0;
+        let duration = 0;
+        let tags = ['EknMediaObject', 'EknArticleObject'];
+
+        if (category)
+            tags.push(category);
+
+        return {
+            'contentType': mime_type,
+            'source': path,
+            'tags': tags,
+            'title': title,
+            'sequenceNumber': sequence,
+            'height': height,
+            'width': width,
+            'license': license,
+            'duration': duration,
+        };
+    },
+
     _create_image: function (path, mime_type) {
         let tags = ['EknMediaObject'];
         let license = '';
@@ -107,6 +130,15 @@ const Processor = new Lang.Class({
                     category = categories[categories.length - 1];
 
                 output['articles'].push(this._create_article(path, name, mime_type, category, this._sequence));
+
+            } else if (mime_type.startsWith('video')) {
+                this._sequence += 1;
+
+                let category = null;
+                if (categories.length > 0)
+                    category = categories[categories.length - 1];
+
+                output['articles'].push(this._create_video(path, name, mime_type, category, this._sequence));
 
             } else {
                print('Ignoring file', file.get_path());
