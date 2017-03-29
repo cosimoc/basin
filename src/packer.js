@@ -43,6 +43,18 @@ const Packer = new Lang.Class ({
         this._shard.finish();
     },
 
+    _get_object_type: function (mime_type) {
+        if (mime_type == 'application/pdf') {
+            return 'ekn://_vocab/ArticleObject';
+
+        } else if (mime_type.startsWith('video')) {
+            return 'ekn://_vocab/VideoObject';
+
+        } else {
+            throw new Error('Object type is not supported', mime_type);
+        }
+    },
+
     _hashify: function (string) {
         return GLib.compute_checksum_for_string(GLib.ChecksumType.SHA1, string, -1);
     },
@@ -57,7 +69,7 @@ const Packer = new Lang.Class ({
         let content_hash = this._hashify(metadata['source']);
 
         metadata['@id'] = 'ekn:///' + content_hash;
-        metadata['@type'] = 'ekn://_vocab/ArticleObject';
+        metadata['@type'] = this._get_object_type(metadata['contentType']);
 
         let metadata_file = this._dump_to_file(metadata);
         let content_file = Gio.File.new_for_path(metadata['source']);
