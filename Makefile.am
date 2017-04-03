@@ -20,6 +20,7 @@ js_sources = \
 	src/links.js \
 	src/index.js \
 	src/packer.js \
+	tools/processor.js \
 	$(NULL)
 
 nobase_pkgdata_DATA = \
@@ -29,6 +30,7 @@ nobase_pkgdata_DATA = \
 edit = sed \
 	-e 's|@pkgdatadir[@]|$(pkgdatadir)|g' \
 	$(NULL)
+
 basin: basin.in Makefile
 	$(AM_V_GEN)rm -f $@ $@.tmp && \
 	$(edit) $< >$@.tmp && \
@@ -36,11 +38,27 @@ basin: basin.in Makefile
 	chmod a-w $@.tmp && \
 	mv $@.tmp $@
 
-CLEANFILES += basin
+basin-processor: basin-processor.in Makefile
+	$(AM_V_GEN)rm -f $@ $@.tmp && \
+	$(edit) $< >$@.tmp && \
+	chmod +x $@.tmp && \
+	chmod a-w $@.tmp && \
+	mv $@.tmp $@
 
-bin_SCRIPTS = basin
+CLEANFILES += \
+	basin \
+	basin-processor \
+	$(NULL)
+
+bin_SCRIPTS = \
+	basin \
+	basin-processor \
+	basin-helper \
+	$(NULL)
 
 EXTRA_DIST += \
 	$(js_sources) \
 	basin.in \
+	basin-processor.in \
+	basin-helper \
 	$(NULL)

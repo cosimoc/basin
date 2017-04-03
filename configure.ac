@@ -37,8 +37,9 @@ AC_CACHE_SAVE
 AX_CHECK_GIRS_GJS(
     [Gio], [2.0],
     [GLib], [2.0],
-    [EosShard], [0],
-    [Xapian], [1.0])
+    [EosShard], [0])
+
+AX_CHECK_GIR_SYMBOLS_GJS([Xapian], [1.0], [Document.add_numeric_value])
 
 AC_CACHE_SAVE
 
