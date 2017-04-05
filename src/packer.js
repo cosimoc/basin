@@ -50,6 +50,9 @@ const Packer = new Lang.Class ({
         } else if (mime_type.startsWith('video')) {
             return 'ekn://_vocab/VideoObject';
 
+        } else if (mime_type.startsWith('audio')) {
+            return 'ekn://_vocab/AudioObject';
+
         } else {
             throw new Error('Object type is not supported', mime_type);
         }
