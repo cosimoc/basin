@@ -31,6 +31,7 @@ const Processor = new Lang.Class({
             'tags': tags,
             'title': title,
             'sequenceNumber': sequence,
+            'isServerTemplated': true,
         };
     },
 
@@ -143,7 +144,7 @@ const Processor = new Lang.Class({
             } else if (mime_type.startsWith('image')) {
                 output['images'].push(this._create_image(path, mime_type));
 
-            } else if (mime_type === 'application/pdf') {
+            } else if (mime_type === 'application/pdf' || mime_type === 'text/html') {
                 this._sequence += 1;
 
                 let category = null;
