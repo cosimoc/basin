@@ -44,7 +44,7 @@ const Packer = new Lang.Class ({
     },
 
     _get_object_type: function (mime_type) {
-        if (mime_type == 'application/pdf') {
+        if (mime_type == 'application/pdf' || mime_type === 'text/html') {
             return 'ekn://_vocab/ArticleObject';
 
         } else if (mime_type.startsWith('video')) {
