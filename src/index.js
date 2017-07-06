@@ -44,7 +44,7 @@ const Index = new Lang.Class({
         this._db = new Xapian.WritableDatabase({
             path: db_dir,
             action: Xapian.DatabaseAction.CREATE_OR_OVERWRITE,
-            flags: Xapian.DatabaseBackend.GLASS,
+            backend: Xapian.DatabaseBackend.GLASS,
         });
         this._db.init(null);
         this._db.set_metadata('XbPrefixes', JSON.stringify(prefixes));
