@@ -3,7 +3,7 @@ const Lang = imports.lang;
 const EosShard = imports.gi.EosShard;
 const Gio = imports.gi.Gio;
 
-const Shard = new Lang.Class({
+var Shard = new Lang.Class({
     Name: 'Shard',
 
     _init: function (path) {
