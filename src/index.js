@@ -13,7 +13,7 @@ const ID_PREFIX = 'Q';
 const DEFAULT_WEIGHT = 1;
 const EXACT_WEIGHT = 27;
 
-const Index = new Lang.Class({
+var Index = new Lang.Class({
     Name: 'Index',
 
     _init: function () {

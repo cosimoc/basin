@@ -7,7 +7,7 @@ const Index = imports.index;
 const Links = imports.links;
 const Shard = imports.shard;
 
-const Packer = new Lang.Class ({
+var Packer = new Lang.Class ({
     Name: 'Packer',
 
     _init: function (json_path, shard_path) {
