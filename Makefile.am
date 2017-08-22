@@ -21,6 +21,7 @@ js_sources = \
 	src/index.js \
 	src/packer.js \
 	tools/processor.js \
+	tools/incubator.js \
 	$(NULL)
 
 nobase_pkgdata_DATA = \
@@ -41,6 +42,13 @@ basin: basin.in Makefile
 	mv $@.tmp $@
 
 basin-processor: basin-processor.in Makefile
+	$(AM_V_GEN)rm -f $@ $@.tmp && \
+	$(edit) $< >$@.tmp && \
+	chmod +x $@.tmp && \
+	chmod a-w $@.tmp && \
+	mv $@.tmp $@
+
+basin-incubator: basin-incubator.in Makefile
 	$(AM_V_GEN)rm -f $@ $@.tmp && \
 	$(edit) $< >$@.tmp && \
 	chmod +x $@.tmp && \
@@ -79,12 +87,15 @@ libbasin_la_LDFLAGS = \
 CLEANFILES += \
 	basin \
 	basin-processor \
+	basin-incubator \
 	$(NULL)
 
 bin_SCRIPTS = \
 	basin \
 	basin-processor \
 	basin-helper \
+	basin-incubator \
+	basin-hatch
 	$(NULL)
 
 EXTRA_DIST += \
@@ -92,6 +103,8 @@ EXTRA_DIST += \
 	basin.in \
 	basin-processor.in \
 	basin-helper \
+	basin-incubator.in \
+	basin-hatch \
 	$(NULL)
 
 # INTROSPECTION

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+export GI_TYPELIB_PATH="@typelibdir@${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}"
+export LD_LIBRARY_PATH="@pkglibdir@${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+
+SCRIPT="
+const Incubator = imports.incubator;
+Incubator.main();"
+
+exec $DEBUG_COMMAND gjs -I @pkgdatadir@/tools -c "$SCRIPT" "$@"
