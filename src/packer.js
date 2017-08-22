@@ -7,6 +7,8 @@ const Index = imports.index;
 const Links = imports.links;
 const Shard = imports.shard;
 
+const EKN_PREFIX = 'ekn:///';
+
 var Packer = new Lang.Class ({
     Name: 'Packer',
 
@@ -69,9 +71,15 @@ var Packer = new Lang.Class ({
     },
 
     _add_article: function (metadata) {
-        let content_hash = this._hashify(metadata['source']);
+        let content_hash;
 
-        metadata['@id'] = 'ekn:///' + content_hash;
+        if ('@id' in metadata) {
+            content_hash = metadata['@id'].replace(EKN_PREFIX, '');
+        } else {
+            content_hash = this._hashify(metadata['source']);
+            metadata['@id'] =  EKN_PREFIX + content_hash;
+        }
+
         metadata['@type'] = this._get_object_type(metadata['contentType']);
 
         let metadata_file = this._dump_to_file(metadata);
@@ -88,9 +96,15 @@ var Packer = new Lang.Class ({
     },
 
     _add_image: function (metadata) {
-        let thumbnail_hash = this._hashify(metadata['source']);
+        let thumbnail_hash;
 
-        metadata['@id'] = 'ekn:///' + thumbnail_hash;
+        if ('@id' in metadata) {
+            thumbnail_hash = metadata['@id'].replace(EKN_PREFIX, '');
+        } else {
+            thumbnail_hash = this._hashify(metadata['source']);
+            metadata['@id'] =  EKN_PREFIX + thumbnail_hash;
+        }
+
         metadata['@type'] = 'ekn://_vocab/ImageObject';
 
         let metadata_file = this._dump_to_file(metadata);
@@ -100,10 +114,16 @@ var Packer = new Lang.Class ({
     },
 
     _add_set: function (metadata) {
-        let set_hash = this._hashify(metadata['title']);
+        let set_hash;
+
+        if ('@id' in metadata) {
+            set_hash = metadata['@id'].replace(EKN_PREFIX, '');
+        } else {
+            set_hash = this._hashify(metadata['title']);
+            metadata['@id'] =  EKN_PREFIX + set_hash;
+        }
 
         metadata['@type'] = 'ekn://_vocab/SetObject';
-        metadata['@id'] = 'ekn:///' + set_hash;
         metadata['thumbnail'] = 'ekn:///' + this._hashify(metadata['thumbnail']);
 
         let metadata_file = this._dump_to_file(metadata);
