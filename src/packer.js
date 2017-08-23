@@ -124,7 +124,9 @@ var Packer = new Lang.Class ({
         }
 
         metadata['@type'] = 'ekn://_vocab/SetObject';
-        metadata['thumbnail'] = 'ekn:///' + this._hashify(metadata['thumbnail']);
+
+        if ('thumbnail' in metadata)
+            metadata['thumbnail'] = 'ekn:///' + this._hashify(metadata['thumbnail']);
 
         let metadata_file = this._dump_to_file(metadata);
 
