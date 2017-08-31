@@ -1,0 +1,24 @@
+#!/bin/bash
+
+PATH_TO_JSON=/tmp/basin.json
+PATH_TO_HATCH=$1
+PATH_TO_CONTENT=$2
+
+check_directory () {
+    if ! [ -d "$1" ]; then
+      echo "$1 not a directory" >&2
+      exit 1
+    fi
+}
+
+if [ "$#" -ne 2 ]; then
+  echo "usage: basin-hatch <path_to_hatch_directory> <path_to_output_directory>" >&2
+  exit 1
+fi
+
+check_directory $PATH_TO_HATCH
+check_directory $PATH_TO_CONTENT
+
+basin-incubator $PATH_TO_HATCH $PATH_TO_JSON || exit 1
+basin $PATH_TO_JSON $PATH_TO_CONTENT/output.shard || exit 1
+eminem regenerate $PATH_TO_CONTENT || exit 1

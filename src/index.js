@@ -68,7 +68,7 @@ var Index = new Lang.Class({
             doc.add_boolean_term(TAG_PREFIX + tag);
         });
 
-        if (metadata['sequenceNumber'] >= 0) {
+        if ('sequenceNumber' in metadata && metadata['sequenceNumber'] >= 0) {
             doc.add_numeric_value(SEQUENCE_NUMBER_VALUE_NO, metadata['sequenceNumber']);
         }
 
