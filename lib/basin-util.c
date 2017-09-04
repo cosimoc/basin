@@ -5,6 +5,8 @@
 #include <libxml/HTMLtree.h>
 #include <libxml/xpath.h>
 
+#define THUMBNAIL_SVG "<svg width=\"640\" height=\"480\" style=\"background: black\"/>"
+
 /**
  * basin_find_resources:
  * @content: (type utf8): the HTML document content
@@ -32,6 +34,21 @@ basin_find_resources (const gchar *content)
         }
     }
   xmlXPathFreeObject (objects);
+
+  /* from videos */
+  objects = xmlXPathEvalExpression ("//a[@data-libingester-asset-id]", context);
+  if (!xmlXPathNodeSetIsEmpty (objects->nodesetval))
+    {
+      xmlNodeSetPtr nodeset = objects->nodesetval;
+      for (int i = 0; i < nodeset->nodeNr; i++)
+        {
+          xmlChar *ekn_id = xmlGetProp (nodeset->nodeTab[i], "data-libingester-asset-id");
+          list = g_list_prepend (list, g_strdup (ekn_id));
+          xmlFree (ekn_id);
+        }
+    }
+  xmlXPathFreeObject (objects);
+
   xmlXPathFreeContext (context);
   xmlFreeDoc (doc);
 
@@ -73,7 +90,7 @@ basin_override_resources (const gchar *content)
     }
   xmlXPathFreeObject(objects);
 
-  /* override links */
+  /* override image links */
   objects = xmlXPathEvalExpression ("//a[@data-soma-widget]", context);
   if (!xmlXPathNodeSetIsEmpty (objects->nodesetval))
     {
@@ -91,6 +108,26 @@ basin_override_resources (const gchar *content)
             }
           xmlXPathFreeContext(subcontext);
           xmlXPathFreeObject(subobjects);
+        }
+    }
+  xmlXPathFreeObject(objects);
+
+  /* override videos links */
+  objects = xmlXPathEvalExpression ("//a[@data-libingester-asset-id]", context);
+  if (!xmlXPathNodeSetIsEmpty (objects->nodesetval))
+    {
+      htmlDocPtr img_node = htmlReadDoc (THUMBNAIL_SVG, "", NULL, HTML_PARSE_RECOVER | HTML_PARSE_NOERROR);
+      xmlNodeSetPtr nodeset = objects->nodesetval;
+      for (int i = 0; i < nodeset->nodeNr; i++)
+        {
+          ekn_id = xmlGetProp (nodeset->nodeTab[i], "data-libingester-asset-id");
+          prop = g_strdup_printf ("ekn:///%s", ekn_id);
+          xmlSetProp (nodeset->nodeTab[i], "href", prop);
+          g_free (prop);
+          xmlFree (ekn_id);
+
+          /* add default thumbnail */
+          xmlAddChild(nodeset->nodeTab[i], (xmlNodePtr) img_node);
         }
     }
   xmlXPathFreeObject(objects);
