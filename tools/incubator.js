@@ -3,6 +3,7 @@ const System = imports.system;
 
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
+const Soup = imports.gi.Soup;
 
 const Basin = imports.gi.Basin;
 
@@ -30,6 +31,26 @@ const Incubator = new Lang.Class({
         let [file, stream] = Gio.File.new_tmp('data_XXXXXX');
         file.replace_contents(text, null, false, 0, null);
         return file.get_path();
+    },
+
+    _download_file: function (uri) {
+        let input_file = Gio.File.new_for_uri(uri);
+        if (input_file.is_native())
+            return input_file;
+
+        print('Downloading', uri);
+        let session = new Soup.Session();
+        let message = Soup.Message.new('GET', uri);
+        let input_stream = session.send(message, null);
+
+        if (message.status_code !== 200)
+            throw new Error(`Failed to download ${uri} with status ${message.status_code}`);
+
+        let [file, stream] = Gio.File.new_tmp('data_XXXXXX');
+        let output_stream = stream.get_output_stream();
+        output_stream.splice(input_stream, Gio.OutputStreamSpliceFlags.CLOSE_TARGET, null);
+
+        return file;
     },
 
     _write_json_file: function (data) {
@@ -85,6 +106,25 @@ const Incubator = new Lang.Class({
         return basin_metadata;
     },
 
+    _import_video: function (asset) {
+        let basin_metadata = {};
+
+        let file = this._download_file(asset['uri']);
+        let info = file.query_info('*', Gio.FileQueryInfoFlags.NONE, null);
+
+        basin_metadata['source'] = file.get_path();
+        basin_metadata['@id'] = 'ekn:///' + asset['asset_id'];
+        basin_metadata['tags'] = ['EknMediaObject', 'EknArticleObject'];
+        basin_metadata['contentType'] = info.get_content_type();
+        basin_metadata['originalURI'] = asset['uri'];
+        basin_metadata['matchingLinks'] = [asset['uri']];
+        basin_metadata['title'] = asset['title'];
+        basin_metadata['lastModifiedDate'] = info.get_modification_time().to_iso8601();
+        basin_metadata['indexed'] = false;
+
+        return basin_metadata;
+    },
+
     _import_set: function (tag) {
         let basin_metadata = {};
 
@@ -122,6 +162,10 @@ const Incubator = new Lang.Class({
         });
 
         [...basin_tags].map(tag => basin_manifest['sets'].push(this._import_set(tag)));
+
+        this._manifest['videos'].forEach(asset => {
+            basin_manifest['content'].push(this._import_video(asset));
+        });
 
         return basin_manifest;
     },

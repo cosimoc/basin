@@ -57,6 +57,7 @@ PKG_CHECK_MODULES([BASIN], [
 ])
 
 AX_CHECK_GIRS_GJS(
+    [Soup], [2.4],
     [Gio], [2.0],
     [GLib], [2.0],
     [EosShard], [0])
