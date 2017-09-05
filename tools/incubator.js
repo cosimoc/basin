@@ -80,6 +80,7 @@ const Incubator = new Lang.Class({
         basin_metadata['matchingLinks'] = metadata['matchingLinks'];
         basin_metadata['title'] = metadata['title'];
         basin_metadata['lastModifiedDate'] = metadata['lastModifiedDate'];
+        basin_metadata['indexed'] = false;
 
         return basin_metadata;
     },
@@ -104,17 +105,16 @@ const Incubator = new Lang.Class({
     _import_hatch: function () {
         let basin_tags = new Set();
         let basin_manifest = new Map();
-        basin_manifest['articles'] = [];
-        basin_manifest['images'] = [];
+        basin_manifest['content'] = [];
         basin_manifest['sets'] = [];
 
         this._manifest['assets'].forEach(asset => {
             let metadata = this._read_json_file(GLib.build_filenamev([this._hatch_dir, `${asset['asset_id']}.metadata`]));
 
-            if (metadata['contentType'] === 'text/html') {
-                basin_manifest['articles'].push(this._import_article(metadata));
-            } else if (metadata['contentType'].startsWith('image')) {
-                basin_manifest['images'].push(this._import_image(metadata));
+            if (metadata['contentType'].startsWith('image')) {
+                basin_manifest['content'].push(this._import_image(metadata));
+            } else {
+                basin_manifest['content'].push(this._import_article(metadata));
             }
 
             if ('tags' in metadata)

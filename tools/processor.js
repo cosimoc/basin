@@ -13,8 +13,7 @@ const Processor = new Lang.Class({
 
     _create_root: function () {
         return {
-            'articles': [],
-            'images': [],
+            'content': [],
             'sets': [],
         };
     },
@@ -92,6 +91,7 @@ const Processor = new Lang.Class({
             'height': height,
             'width': width,
             'source': path,
+            'indexed': false,
         };
     },
 
@@ -142,7 +142,7 @@ const Processor = new Lang.Class({
                 output['sets'].push(this._create_set(name, [name], tags, thumbnail_path));
 
             } else if (mime_type.startsWith('image')) {
-                output['images'].push(this._create_image(path, mime_type));
+                output['content'].push(this._create_image(path, mime_type));
 
             } else if (mime_type === 'application/pdf' || mime_type === 'text/html') {
                 this._sequence += 1;
@@ -151,7 +151,7 @@ const Processor = new Lang.Class({
                 if (categories.length > 0)
                     category = categories[categories.length - 1];
 
-                output['articles'].push(this._create_article(path, name, mime_type, category, this._sequence));
+                output['content'].push(this._create_article(path, name, mime_type, category, this._sequence));
 
             } else if (mime_type.startsWith('video')) {
                 this._sequence += 1;
@@ -160,7 +160,7 @@ const Processor = new Lang.Class({
                 if (categories.length > 0)
                     category = categories[categories.length - 1];
 
-                output['articles'].push(this._create_video(path, name, mime_type, category, this._sequence));
+                output['content'].push(this._create_video(path, name, mime_type, category, this._sequence));
 
             } else if (mime_type.startsWith('audio')) {
                 this._sequence += 1;
@@ -169,7 +169,7 @@ const Processor = new Lang.Class({
                 if (categories.length > 0)
                     category = categories[categories.length - 1];
 
-                output['articles'].push(this._create_audio(path, name, mime_type, category, this._sequence));
+                output['content'].push(this._create_audio(path, name, mime_type, category, this._sequence));
 
             } else {
                print('Ignoring file', file.get_path());

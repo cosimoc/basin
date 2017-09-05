@@ -23,11 +23,8 @@ var Packer = new Lang.Class ({
     },
 
     run: function () {
-        print('Writing articles');
-        this._json['articles'].forEach(this._add_article, this);
-
-        print('Writing images');
-        this._json['images'].forEach(this._add_image, this);
+        print('Writing content');
+        this._json['content'].forEach(this._add_content, this);
 
         print('Writing sets');
         this._json['sets'].forEach(this._add_set, this);
@@ -55,6 +52,9 @@ var Packer = new Lang.Class ({
         } else if (mime_type.startsWith('audio')) {
             return 'ekn://_vocab/AudioObject';
 
+        } else if (mime_type.startsWith('image')) {
+            return 'ekn://_vocab/ImageObject';
+
         } else {
             throw new Error('Object type is not supported', mime_type);
         }
@@ -70,7 +70,7 @@ var Packer = new Lang.Class ({
         return file;
     },
 
-    _add_article: function (metadata) {
+    _add_content: function (metadata) {
         let content_hash;
 
         if ('@id' in metadata) {
@@ -86,31 +86,15 @@ var Packer = new Lang.Class ({
         let content_file = Gio.File.new_for_path(metadata['source']);
 
         this._shard.add(content_hash, metadata['contentType'], metadata_file, content_file);
-        this._index.add(metadata);
+
+        if (!('indexed' in metadata) || metadata['indexed'])
+            this._index.add(metadata);
 
         if (metadata['matchingLinks']) {
             metadata['matchingLinks'].forEach((link) => {
                 this._links.add(link, metadata['@id']);
             });
         }
-    },
-
-    _add_image: function (metadata) {
-        let thumbnail_hash;
-
-        if ('@id' in metadata) {
-            thumbnail_hash = metadata['@id'].replace(EKN_PREFIX, '');
-        } else {
-            thumbnail_hash = this._hashify(metadata['source']);
-            metadata['@id'] =  EKN_PREFIX + thumbnail_hash;
-        }
-
-        metadata['@type'] = 'ekn://_vocab/ImageObject';
-
-        let metadata_file = this._dump_to_file(metadata);
-        let thumbnail_file = Gio.File.new_for_path(metadata['source']);
-
-        this._shard.add(thumbnail_hash, metadata['contentType'], metadata_file, thumbnail_file);
     },
 
     _add_set: function (metadata) {
