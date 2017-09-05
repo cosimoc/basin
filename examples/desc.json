@@ -1,5 +1,5 @@
 {
-  "articles": [
+  "content": [
     {
       "contentType": "application/pdf",
       "source": "article.pdf",
@@ -9,16 +9,15 @@
       ],
       "title": "Article",
       "sequenceNumber": 1
-    }
-  ],
-  "images": [
+    },
     {
         "contentType": "image/jpg",
         "license": "CC-BY 3.0",
         "tags": ["EknMediaObject"],
         "height": 531,
         "width": 540,
-        "source": "image.jpg"
+        "source": "image.jpg",
+        "indexed": false
     }
   ],
   "sets": [
