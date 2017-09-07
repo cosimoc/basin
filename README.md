@@ -92,4 +92,16 @@ To structure your content with sub-categories, so that *Sports* is a sub-categor
 }
 ```
 
+To change the title of a category:
+
+```
+{
+   "tags":{
+      "Animals":{
+         "title": "The Animals Sections"
+      }
+   }
+}
+
+
 If the `hatch_sets.json` doesn't exist or is empty then all categories will default to non-featured.

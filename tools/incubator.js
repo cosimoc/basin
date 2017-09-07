@@ -141,6 +141,8 @@ const Incubator = new Lang.Class({
 
         if (tag in this._sets['tags']) {
             let tag_data = this._sets['tags'][tag];
+            if ('title' in tag_data)
+                basin_metadata['title'] = tag_data['title'];
             if ('featured' in tag_data)
                 basin_metadata['featured'] = tag_data['featured'];
             if ('tags' in tag_data)
