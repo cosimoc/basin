@@ -125,6 +125,23 @@ const Incubator = new Lang.Class({
         return basin_metadata;
     },
 
+    _import_set_thumbnail: function (uri) {
+        let basin_metadata = {};
+
+        let file = this._download_file(uri);
+        let info = file.query_info('*', Gio.FileQueryInfoFlags.NONE, null);
+
+        basin_metadata['source'] = file.get_path();
+        basin_metadata['tags'] = ['EknMediaObject'];
+        basin_metadata['contentType'] = info.get_content_type();
+        basin_metadata['originalURI'] = uri;
+        basin_metadata['matchingLinks'] = [uri];
+        basin_metadata['lastModifiedDate'] = info.get_modification_time().to_iso8601();
+        basin_metadata['indexed'] = false;
+
+        return basin_metadata;
+    },
+
     _import_set: function (tag) {
         let basin_metadata = {};
 
@@ -143,6 +160,8 @@ const Incubator = new Lang.Class({
             let tag_data = this._sets['tags'][tag];
             if ('title' in tag_data)
                 basin_metadata['title'] = tag_data['title'];
+            if ('thumbnailURI' in tag_data)
+                basin_metadata['thumbnail'] = tag_data['thumbnailURI'];
             if ('featured' in tag_data)
                 basin_metadata['featured'] = tag_data['featured'];
             if ('tags' in tag_data)
@@ -174,7 +193,17 @@ const Incubator = new Lang.Class({
                 metadata['tags'].forEach(tag => basin_tags.add(tag));
         });
 
-        [...basin_tags].map(tag => basin_manifest['sets'].push(this._import_set(tag)));
+        [...basin_tags].forEach(tag => {
+            let set_metadata = this._import_set(tag);
+
+            if ('thumbnail' in set_metadata) {
+                let thumb_metadata = this._import_set_thumbnail(set_metadata['thumbnail']);
+                set_metadata['thumbnail'] = thumb_metadata['source'];
+                basin_manifest['content'].push(thumb_metadata);
+            }
+
+            basin_manifest['sets'].push(set_metadata);
+        });
 
         this._manifest['videos'].forEach(asset => {
             basin_manifest['content'].push(this._import_video(asset));
