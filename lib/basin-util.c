@@ -21,14 +21,14 @@ basin_find_resources (const gchar *content)
   doc = htmlReadDoc (content, "", NULL, HTML_PARSE_RECOVER | HTML_PARSE_NOERROR);
   context = xmlXPathNewContext (doc);
   objects = xmlXPathEvalExpression ("//img[@data-soma-job-id]", context);
-
   if (!xmlXPathNodeSetIsEmpty (objects->nodesetval))
     {
       xmlNodeSetPtr nodeset = objects->nodesetval;
       for (int i = 0; i < nodeset->nodeNr; i++)
         {
           xmlChar *ekn_id = xmlGetProp (nodeset->nodeTab[i], "data-soma-job-id");
-          list = g_list_append (list, ekn_id);
+          list = g_list_append (list, g_strdup (ekn_id));
+          xmlFree (ekn_id);
         }
     }
   xmlXPathFreeObject (objects);
@@ -67,7 +67,7 @@ basin_override_resources (const gchar *content)
           ekn_id = xmlGetProp (nodeset->nodeTab[i], "data-soma-job-id");
           prop = g_strdup_printf ("ekn:///%s", ekn_id);
           xmlSetProp (nodeset->nodeTab[i], "src", prop);
-          xmlFree (prop);
+          g_free (prop);
           xmlFree (ekn_id);
         }
     }
