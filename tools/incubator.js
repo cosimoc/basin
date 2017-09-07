@@ -131,10 +131,21 @@ const Incubator = new Lang.Class({
         basin_metadata['childTags'] = [tag];
         basin_metadata['tags'] = ['EknSetObject'];
         basin_metadata['title'] = tag;
-        basin_metadata['featured'] = (this._sets !== null && this._sets['featured-by-default']);
+        basin_metadata['featured'] = false;
 
-        if (this._sets !== null && 'tags' in this._sets && tag in this._sets['tags'])
-            basin_metadata['featured'] = this._sets['tags'][tag]['featured'];
+        if (this._sets === null)
+            return basin_metadata;
+
+        if ('featured-by-default' in this._sets)
+            basin_metadata['featured'] = this._sets['featured-by-default'];
+
+        if (tag in this._sets['tags']) {
+            let tag_data = this._sets['tags'][tag];
+            if ('featured' in tag_data)
+                basin_metadata['featured'] = tag_data['featured'];
+            if ('tags' in tag_data)
+                basin_metadata['tags'] = basin_metadata['tags'].concat(tag_data['tags']);
+        }
 
         if (basin_metadata['featured'])
             basin_metadata['tags'].push('EknHomePageTag');
