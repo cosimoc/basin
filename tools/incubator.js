@@ -46,7 +46,7 @@ const Incubator = new Lang.Class({
     },
 
     _import_article: function (metadata) {
-        let basin_metadata = new Map();
+        let basin_metadata = {};
 
         basin_metadata['source'] = this._write_text_file(this._override_resources(metadata));
         basin_metadata['@id'] = 'ekn:///' + metadata['assetID'];
@@ -70,7 +70,7 @@ const Incubator = new Lang.Class({
     },
 
     _import_image: function (metadata) {
-        let basin_metadata = new Map();
+        let basin_metadata = {};
 
         basin_metadata['source'] = GLib.build_filenamev([this._hatch_dir, metadata['cdnFilename']]);
         basin_metadata['@id'] = 'ekn:///' + metadata['assetID'];
@@ -86,7 +86,7 @@ const Incubator = new Lang.Class({
     },
 
     _import_set: function (tag) {
-        let basin_metadata = new Map();
+        let basin_metadata = {};
 
         basin_metadata['childTags'] = [tag];
         basin_metadata['tags'] = ['EknSetObject'];
@@ -104,7 +104,7 @@ const Incubator = new Lang.Class({
 
     _import_hatch: function () {
         let basin_tags = new Set();
-        let basin_manifest = new Map();
+        let basin_manifest = {};
         basin_manifest['content'] = [];
         basin_manifest['sets'] = [];
 
