@@ -27,7 +27,7 @@ basin_find_resources (const gchar *content)
       for (int i = 0; i < nodeset->nodeNr; i++)
         {
           xmlChar *ekn_id = xmlGetProp (nodeset->nodeTab[i], "data-soma-job-id");
-          list = g_list_append (list, g_strdup (ekn_id));
+          list = g_list_prepend (list, g_strdup (ekn_id));
           xmlFree (ekn_id);
         }
     }
@@ -35,7 +35,7 @@ basin_find_resources (const gchar *content)
   xmlXPathFreeContext (context);
   xmlFreeDoc (doc);
 
-  return list;
+  return g_list_reverse (list);
 }
 
 /**
