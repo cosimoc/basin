@@ -77,4 +77,41 @@ If you want all the categories to be featured, except for *Sports* then your `ha
 }
 ```
 
+To structure your content with sub-categories, so that *Sports* is a sub-category of *International*:
+
+```
+{
+   "tags":{
+      "International":{
+         "featured":true
+      },
+      "Sports":{
+         "tags": ["International"]
+      }
+   }
+}
+```
+
+To change the title of a category:
+
+```
+{
+   "tags":{
+      "Animals":{
+         "title": "The Animals Sections"
+      }
+   }
+}
+
+To specify the thumbnail of a category:
+
+```
+{
+   "tags":{
+      "Animals":{
+         "thumbnailURI": "http://to.your.thumbnail.png"
+      }
+   }
+}
+
 If the `hatch_sets.json` doesn't exist or is empty then all categories will default to non-featured.
