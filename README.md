@@ -102,10 +102,11 @@ To change the title of a category:
       }
    }
 }
-
-To specify the thumbnail of a category:
+```
 
 ```
+To specify the thumbnail of a category:
+
 {
    "tags":{
       "Animals":{
@@ -113,5 +114,6 @@ To specify the thumbnail of a category:
       }
    }
 }
+```
 
 If the `hatch_sets.json` doesn't exist or is empty then all categories will default to non-featured.
