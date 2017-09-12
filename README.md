@@ -104,9 +104,9 @@ To change the title of a category:
 }
 ```
 
-```
 To specify the thumbnail of a category:
 
+```
 {
    "tags":{
       "Animals":{
