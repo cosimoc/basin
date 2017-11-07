@@ -6,10 +6,14 @@ A toolkit for packing offline content for Endless' knowledge apps.
 Building
 --------
 
+Make sure you have dependencies like
+[eos-shard](https://github.com/endlessm/eos-shard) and
+[Xapian-GLib](https://github.com/endlessm/xapian-glib) .
+
 ```
 ./autogen.sh
-./make
-./make install
+make
+make install
 ```
 
 Tools
