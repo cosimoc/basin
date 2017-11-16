@@ -127,8 +127,10 @@ basin_override_resources (const gchar *content)
           xmlFree (ekn_id);
 
           /* add default thumbnail */
-          xmlAddChild(nodeset->nodeTab[i], (xmlNodePtr) img_node);
+          xmlAddChild (nodeset->nodeTab[i], xmlCopyNode ((xmlNodePtr) img_node, 2));
         }
+
+      xmlFreeDoc (img_node);
     }
   xmlXPathFreeObject(objects);
 
