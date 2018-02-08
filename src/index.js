@@ -5,6 +5,7 @@ const GLib = imports.gi.GLib;
 const Xapian = imports.gi.Xapian;
 
 const SEQUENCE_NUMBER_VALUE_NO = 0;
+const CONTENT_TYPE_PREFIX = 'T';
 const EXACT_TITLE_PREFIX = 'XEXACTS';
 const TITLE_PREFIX = 'S';
 const TAG_PREFIX = 'K';
@@ -20,6 +21,10 @@ var Index = new Lang.Class({
         let db_dir = GLib.dir_make_tmp('db_dir_XXXXXX');
         let prefixes = {
             'prefixes': [
+                {
+                    'field':  'content_type',
+                    'prefix': CONTENT_TYPE_PREFIX,
+                },
                 {
                     'field':  'exact_title',
                     'prefix': EXACT_TITLE_PREFIX,
@@ -58,11 +63,13 @@ var Index = new Lang.Class({
 
     add: function (metadata) {
         let exact_title = metadata['title'].toLocaleLowerCase().replace('-', '_').replace(' ', '_');
+        let content_type = metadata['contentType'];
 
         let doc = new Xapian.Document();
         doc.set_data(metadata['@id']);
         doc.add_boolean_term(ID_PREFIX + metadata['@id']);
         doc.add_term_full(EXACT_TITLE_PREFIX + exact_title, EXACT_WEIGHT);
+        doc.add_term_full(CONTENT_TYPE_PREFIX + content_type, DEFAULT_WEIGHT);
 
         metadata['tags'].forEach((tag) => {
             doc.add_boolean_term(TAG_PREFIX + tag);
