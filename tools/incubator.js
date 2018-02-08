@@ -69,9 +69,15 @@ const Incubator = new Lang.Class({
     _import_article: function (metadata) {
         let basin_metadata = {};
 
+        let discoveryFeedContent = metadata['discoveryFeedContent'] || {};
+        let tags = metadata['tags'].slice();
+        tags.unshift('EknArticleObject');
+        if (discoveryFeedContent['blurbs'])
+            tags.unshift('EknHasDiscoveryFeedTitle');
+
         basin_metadata['source'] = this._write_text_file(this._override_resources(metadata));
         basin_metadata['@id'] = 'ekn:///' + metadata['assetID'];
-        basin_metadata['tags'] = ['EknArticleObject'].concat(metadata['tags']);
+        basin_metadata['tags'] = tags;
         basin_metadata['contentType'] = metadata['contentType'];
         basin_metadata['originalURI'] = metadata['canonicalURI'];
         basin_metadata['matchingLinks'] = metadata['matchingLinks'];
@@ -82,7 +88,11 @@ const Incubator = new Lang.Class({
         basin_metadata['synopsis'] = metadata['synopsis'];
         basin_metadata['authors'] = metadata['authors'];
         basin_metadata['isServerTemplated'] = true;
+        basin_metadata['discoveryFeedContent'] = discoveryFeedContent;
         basin_metadata['resources'] = this._find_resources(metadata);
+
+        if ('temporalCoverage' in metadata)
+            basin_metadata['temporalCoverage'] = metadata['temporalCoverage'];
 
         if ('thumbnail' in metadata)
             basin_metadata['thumbnail'] = 'ekn:///' + metadata['thumbnail'];
