@@ -219,6 +219,17 @@ const Incubator = new Lang.Class({
             basin_manifest['content'].push(this._import_video(asset));
         });
 
+
+        /* Once we're done, look over all the content in the manifest and
+         * set the parent key on each metadata struct. */
+        let manifest_table = basin_manifest.content.filter(metadata => metadata['@id'])
+            .reduce((acc, metadata) => acc.set(metadata['@id'], metadata), new Map());
+
+        basin_manifest.content.filter(metadata =>
+            metadata.hasOwnProperty('resources')).forEach(metadata =>
+                metadata.resources.forEach(resource =>
+                    manifest_table.get(resource).parent = metadata['@id']));
+
         return basin_manifest;
     },
 
