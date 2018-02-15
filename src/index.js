@@ -5,6 +5,8 @@ const GLib = imports.gi.GLib;
 const Xapian = imports.gi.Xapian;
 
 const SEQUENCE_NUMBER_VALUE_NO = 0;
+const PUBLISHED_DATE_VALUE_NO = 1;
+
 const CONTENT_TYPE_PREFIX = 'T';
 const EXACT_TITLE_PREFIX = 'XEXACTS';
 const TITLE_PREFIX = 'S';
@@ -13,6 +15,17 @@ const ID_PREFIX = 'Q';
 
 const DEFAULT_WEIGHT = 1;
 const EXACT_WEIGHT = 27;
+
+/* Try the publication date first and if that fails,
+ * the last modification date. */
+function _indexDateForMetadata(metadata) {
+    if ('published' in metadata)
+        return metadata['published'];
+    else if ('lastModifiedDate' in metadata)
+        return metadata['lastModifiedDate'];
+
+    return null;
+}
 
 var Index = new Lang.Class({
     Name: 'Index',
@@ -77,6 +90,22 @@ var Index = new Lang.Class({
 
         if ('sequenceNumber' in metadata && metadata['sequenceNumber'] >= 0) {
             doc.add_numeric_value(SEQUENCE_NUMBER_VALUE_NO, metadata['sequenceNumber']);
+        }
+
+        const indexingDateString = _indexDateForMetadata(metadata);
+        if (indexingDateString) {
+            /* Parse the date using the native JS Date library, since
+             * GLib.Date.set_parse isn't able to handle JS-style dates. */
+            try {
+                const parsedIndexingDate = new Date(indexingDateString);
+                const timestamp = Number(GLib.DateTime.new_from_unix_utc(Math.floor(parsedIndexingDate / 1000))
+                                                      .format("%Y%m%d%H%M%S"));
+
+                doc.add_numeric_value(PUBLISHED_DATE_VALUE_NO, timestamp);
+            } catch (e) {
+                log(`Could not parse ${indexingDateString}: ${e} ` +
+                    `, ${metadata['@id']} will not be date-sortable`);
+            }
         }
 
         this._termgenerator.set_document(doc);
