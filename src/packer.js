@@ -80,12 +80,21 @@ var Packer = new Lang.Class ({
             metadata['@id'] =  EKN_PREFIX + content_hash;
         }
 
-        metadata['@type'] = this._get_object_type(metadata['contentType']);
+        let content_type = null;
+        if (metadata['contentType'])
+            content_type = metadata['contentType'];
 
+        if (!metadata['@type'])
+            metadata['@type'] = this._get_object_type(metadata['contentType']);
+
+        let content_file = null;
+        if (metadata['source'])
+            content_file = Gio.File.new_for_path(metadata['source']);
+
+        metadata['source'] = metadata['sourceName'];
         let metadata_file = this._dump_to_file(metadata);
-        let content_file = Gio.File.new_for_path(metadata['source']);
 
-        this._shard.add(content_hash, metadata['contentType'], metadata_file, content_file);
+        this._shard.add(content_hash, content_type, metadata_file, content_file);
 
         if (!('indexed' in metadata) || metadata['indexed'])
             this._index.add(metadata);
