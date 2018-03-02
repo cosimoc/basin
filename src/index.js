@@ -6,6 +6,7 @@ const Xapian = imports.gi.Xapian;
 
 const SEQUENCE_NUMBER_VALUE_NO = 0;
 const PUBLISHED_DATE_VALUE_NO = 1;
+const ALPHABETICAL_VALUE_NO = 2;
 
 const CONTENT_TYPE_PREFIX = 'T';
 const EXACT_TITLE_PREFIX = 'XEXACTS';
@@ -107,6 +108,9 @@ var Index = new Lang.Class({
                     `, ${metadata['@id']} will not be date-sortable`);
             }
         }
+
+        if (metadata['title'])
+            doc.add_value(ALPHABETICAL_VALUE_NO, metadata['title']);
 
         this._termgenerator.set_document(doc);
         this._termgenerator.index_text_full(metadata['title'], DEFAULT_WEIGHT, TITLE_PREFIX);
