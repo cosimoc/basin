@@ -122,6 +122,9 @@ const Incubator = new Lang.Class({
         let file = this._download_file(asset['uri']);
         let info = file.query_info('*', Gio.FileQueryInfoFlags.NONE, null);
 
+        if (!info.get_content_type().startsWith('video'))
+            throw new Error(`Failed to import ${asset['uri']} is not a video file`);
+
         basin_metadata['source'] = file.get_path();
         basin_metadata['@id'] = 'ekn:///' + asset['asset_id'];
         basin_metadata['tags'] = ['EknMediaObject', 'EknArticleObject'];
