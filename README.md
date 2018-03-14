@@ -120,4 +120,19 @@ To specify the thumbnail of a category:
 }
 ```
 
+To specify a display order for your categories:
+
+```
+{
+   "tags":{
+      "First Category":{
+         "sequenceNumber": 1
+      },
+      "Second Category":{
+         "sequenceNumber": 2
+      }
+   }
+}
+```
+
 If the `hatch_sets.json` doesn't exist or is empty then all categories will default to non-featured.
