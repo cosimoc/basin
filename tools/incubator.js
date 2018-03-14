@@ -97,6 +97,9 @@ const Incubator = new Lang.Class({
         if ('thumbnail' in metadata)
             basin_metadata['thumbnail'] = 'ekn:///' + metadata['thumbnail'];
 
+        if ('sequenceNumber' in metadata)
+            basin_metadata['sequenceNumber'] = metadata['sequenceNumber'];
+
         return basin_metadata;
     },
 
@@ -179,6 +182,8 @@ const Incubator = new Lang.Class({
                 basin_metadata['featured'] = tag_data['featured'];
             if ('tags' in tag_data)
                 basin_metadata['tags'] = basin_metadata['tags'].concat(tag_data['tags']);
+            if ('sequenceNumber' in tag_data)
+                basin_metadata['sequenceNumber'] = tag_data['sequenceNumber'];
         }
 
         if (basin_metadata['featured'])
