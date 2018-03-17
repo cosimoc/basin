@@ -36,13 +36,13 @@ basin_find_resources (const gchar *content)
   xmlXPathFreeObject (objects);
 
   /* from videos */
-  objects = xmlXPathEvalExpression ("//a[@data-libingester-asset-id]", context);
+  objects = xmlXPathEvalExpression ("//a[@data-soma-job-id]", context);
   if (!xmlXPathNodeSetIsEmpty (objects->nodesetval))
     {
       xmlNodeSetPtr nodeset = objects->nodesetval;
       for (int i = 0; i < nodeset->nodeNr; i++)
         {
-          xmlChar *ekn_id = xmlGetProp (nodeset->nodeTab[i], "data-libingester-asset-id");
+          xmlChar *ekn_id = xmlGetProp (nodeset->nodeTab[i], "data-soma-job-id");
           list = g_list_prepend (list, g_strdup (ekn_id));
           xmlFree (ekn_id);
         }
@@ -113,14 +113,14 @@ basin_override_resources (const gchar *content)
   xmlXPathFreeObject(objects);
 
   /* override videos links */
-  objects = xmlXPathEvalExpression ("//a[@data-libingester-asset-id]", context);
+  objects = xmlXPathEvalExpression ("//a[@data-soma-job-id]", context);
   if (!xmlXPathNodeSetIsEmpty (objects->nodesetval))
     {
       htmlDocPtr img_node = htmlReadDoc (THUMBNAIL_SVG, "", NULL, HTML_PARSE_RECOVER | HTML_PARSE_NOERROR);
       xmlNodeSetPtr nodeset = objects->nodesetval;
       for (int i = 0; i < nodeset->nodeNr; i++)
         {
-          ekn_id = xmlGetProp (nodeset->nodeTab[i], "data-libingester-asset-id");
+          ekn_id = xmlGetProp (nodeset->nodeTab[i], "data-soma-job-id");
           prop = g_strdup_printf ("ekn:///%s", ekn_id);
           xmlSetProp (nodeset->nodeTab[i], "href", prop);
           g_free (prop);
