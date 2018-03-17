@@ -119,7 +119,7 @@ const Incubator = new Lang.Class({
         return basin_metadata;
     },
 
-    _import_video: function (asset) {
+    _import_video: function (asset, metadata) {
         let basin_metadata = {};
 
         let file = this._download_file(asset['uri']);
@@ -132,11 +132,26 @@ const Incubator = new Lang.Class({
         basin_metadata['@id'] = 'ekn:///' + asset['asset_id'];
         basin_metadata['tags'] = ['EknMediaObject', 'EknArticleObject'];
         basin_metadata['contentType'] = info.get_content_type();
-        basin_metadata['originalURI'] = asset['uri'];
-        basin_metadata['matchingLinks'] = [asset['uri']];
-        basin_metadata['title'] = asset['title'];
-        basin_metadata['lastModifiedDate'] = info.get_modification_time().to_iso8601();
         basin_metadata['indexed'] = false;
+        if (metadata) {
+            basin_metadata['tags'].push(...metadata['tags']);
+            basin_metadata['originalURI'] = metadata['canonicalURI'];
+            basin_metadata['matchingLinks'] = metadata['matchingLinks'];
+            basin_metadata['title'] = metadata['title'];
+            basin_metadata['published'] = metadata['published'];
+            basin_metadata['lastModifiedDate'] = metadata['lastModifiedDate'];
+            basin_metadata['license'] = metadata['license'];
+            basin_metadata['synopsis'] = metadata['synopsis'];
+            basin_metadata['authors'] = metadata['authors'];
+
+            if ('thumbnail' in metadata)
+                basin_metadata['thumbnail'] = 'ekn:///' + metadata['thumbnail'];
+        } else {
+            basin_metadata['originalURI'] = asset['uri'];
+            basin_metadata['matchingLinks'] = [asset['uri']];
+            basin_metadata['title'] = asset['title'];
+            basin_metadata['lastModifiedDate'] = info.get_modification_time().to_iso8601();
+        }
 
         return basin_metadata;
     },
@@ -224,7 +239,9 @@ const Incubator = new Lang.Class({
         });
 
         this._manifest['videos'].forEach(asset => {
-            basin_manifest['content'].push(this._import_video(asset));
+            const metadata = this._read_json_file(GLib.build_filenamev([this._hatch_dir,
+                `${asset.asset_id}.metadata`]));
+            basin_manifest['content'].push(this._import_video(asset, metadata));
         });
 
 
