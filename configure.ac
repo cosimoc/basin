@@ -60,9 +60,8 @@ AX_CHECK_GIRS_GJS(
     [Soup], [2.4],
     [Gio], [2.0],
     [GLib], [2.0],
-    [EosShard], [0])
-
-AX_CHECK_GIR_SYMBOLS_GJS([Xapian], [1.0], [Document.add_numeric_value])
+    [EosShard], [0],
+    [Xapian], [2.0])
 
 AC_CACHE_SAVE
 

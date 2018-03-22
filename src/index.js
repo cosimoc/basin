@@ -2,6 +2,7 @@ const Lang = imports.lang;
 
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
+imports.gi.versions.Xapian = '2.0';
 const Xapian = imports.gi.Xapian;
 
 const SEQUENCE_NUMBER_VALUE_NO = 0;
