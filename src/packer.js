@@ -76,14 +76,14 @@ var Packer = new Lang.Class ({
         if ('@id' in metadata) {
             content_hash = metadata['@id'].replace(EKN_PREFIX, '');
         } else {
-            content_hash = this._hashify(metadata['source']);
+            content_hash = this._hashify(metadata['path']);
             metadata['@id'] =  EKN_PREFIX + content_hash;
         }
 
         metadata['@type'] = this._get_object_type(metadata['contentType']);
 
         let metadata_file = this._dump_to_file(metadata);
-        let content_file = Gio.File.new_for_path(metadata['source']);
+        let content_file = Gio.File.new_for_path(metadata['path']);
 
         this._shard.add(content_hash, metadata['contentType'], metadata_file, content_file);
 
