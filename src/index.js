@@ -64,7 +64,7 @@ var Index = new Lang.Class({
         this._db = new Xapian.WritableDatabase({
             path: db_dir,
             action: Xapian.DatabaseAction.CREATE_OR_OVERWRITE,
-            backend: Xapian.DatabaseBackend.HONEY,
+            backend: Xapian.DatabaseBackend.GLASS,
         });
         this._db.init(null);
         this._db.set_metadata('XbPrefixes', JSON.stringify(prefixes));
@@ -125,7 +125,10 @@ var Index = new Lang.Class({
         let out_stream = stream.get_output_stream();
 
         this._db.commit();
-        this._db.compact_to_fd(out_stream.get_fd(), Xapian.DatabaseCompactFlags.SINGLE_FILE);
+        this._db.compact_to_fd(out_stream.get_fd(),
+            Xapian.DatabaseCompactFlags.SINGLE_FILE,
+            Xapian.DatabaseBackend.HONEY,
+            Xapian.DatabaseCompactLevel.STANDARD);
         this._db.close();
 
         return file;
