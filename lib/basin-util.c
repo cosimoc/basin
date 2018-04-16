@@ -7,6 +7,25 @@
 
 #define THUMBNAIL_SVG "<svg width=\"640\" height=\"480\" style=\"background: black\"/>"
 
+static void
+append_ids_from_xpath_expression(xmlXPathContextPtr cx,
+                                 GList **list,
+                                 const char *xpath_expr)
+{
+  xmlXPathObjectPtr objects = xmlXPathEvalExpression (xpath_expr, cx);
+  xmlNodeSetPtr nodeset = objects->nodesetval;
+  if (!xmlXPathNodeSetIsEmpty (nodeset))
+    {
+      for (int i = 0; i < nodeset->nodeNr; i++)
+        {
+          xmlChar *id = xmlGetProp (nodeset->nodeTab[i], "data-soma-job-id");
+          *list = g_list_prepend (*list, g_strdup (id));
+          xmlFree (id);
+        }
+    }
+  xmlXPathFreeObject (objects);
+}
+
 /**
  * basin_find_resources:
  * @content: (type utf8): the HTML document content
@@ -18,36 +37,13 @@ basin_find_resources (const gchar *content)
   GList *list = NULL;
   htmlDocPtr doc;
   xmlXPathContextPtr context;
-  xmlXPathObjectPtr objects;
 
   doc = htmlReadDoc (content, "", NULL, HTML_PARSE_RECOVER | HTML_PARSE_NOERROR);
   context = xmlXPathNewContext (doc);
-  objects = xmlXPathEvalExpression ("//img[@data-soma-job-id]", context);
-  if (!xmlXPathNodeSetIsEmpty (objects->nodesetval))
-    {
-      xmlNodeSetPtr nodeset = objects->nodesetval;
-      for (int i = 0; i < nodeset->nodeNr; i++)
-        {
-          xmlChar *ekn_id = xmlGetProp (nodeset->nodeTab[i], "data-soma-job-id");
-          list = g_list_prepend (list, g_strdup (ekn_id));
-          xmlFree (ekn_id);
-        }
-    }
-  xmlXPathFreeObject (objects);
+  append_ids_from_xpath_expression (context, &list, "//img[@data-soma-job-id]");
 
   /* from videos */
-  objects = xmlXPathEvalExpression ("//a[@data-soma-job-id]", context);
-  if (!xmlXPathNodeSetIsEmpty (objects->nodesetval))
-    {
-      xmlNodeSetPtr nodeset = objects->nodesetval;
-      for (int i = 0; i < nodeset->nodeNr; i++)
-        {
-          xmlChar *ekn_id = xmlGetProp (nodeset->nodeTab[i], "data-soma-job-id");
-          list = g_list_prepend (list, g_strdup (ekn_id));
-          xmlFree (ekn_id);
-        }
-    }
-  xmlXPathFreeObject (objects);
+  append_ids_from_xpath_expression (context, &list, "//a[@data-soma-job-id]");
 
   xmlXPathFreeContext (context);
   xmlFreeDoc (doc);
@@ -68,7 +64,7 @@ basin_override_resources (const gchar *content)
   xmlXPathObjectPtr objects;
   int len;
   xmlChar *result = NULL;
-  xmlChar *ekn_id;
+  xmlChar *id;
   xmlChar *prop;
 
   doc = htmlReadDoc (content, "", NULL, HTML_PARSE_RECOVER | HTML_PARSE_NOERROR);
@@ -81,11 +77,11 @@ basin_override_resources (const gchar *content)
       xmlNodeSetPtr nodeset = objects->nodesetval;
       for (int i = 0; i < nodeset->nodeNr; i++)
         {
-          ekn_id = xmlGetProp (nodeset->nodeTab[i], "data-soma-job-id");
-          prop = g_strdup_printf ("ekn:///%s", ekn_id);
+          id = xmlGetProp (nodeset->nodeTab[i], "data-soma-job-id");
+          prop = g_strdup_printf ("ekn:///%s", id);
           xmlSetProp (nodeset->nodeTab[i], "src", prop);
           g_free (prop);
-          xmlFree (ekn_id);
+          xmlFree (id);
         }
     }
   xmlXPathFreeObject(objects);
@@ -102,9 +98,9 @@ basin_override_resources (const gchar *content)
           if (!xmlXPathNodeSetIsEmpty (subobjects->nodesetval))
             {
               xmlNodeSetPtr subnodeset = subobjects->nodesetval;
-              ekn_id = xmlGetProp (subnodeset->nodeTab[0], "src");
-              xmlSetProp (nodeset->nodeTab[i], "href", ekn_id);
-              xmlFree (ekn_id);
+              id = xmlGetProp (subnodeset->nodeTab[0], "src");
+              xmlSetProp (nodeset->nodeTab[i], "href", id);
+              xmlFree (id);
             }
           xmlXPathFreeContext(subcontext);
           xmlXPathFreeObject(subobjects);
@@ -120,11 +116,11 @@ basin_override_resources (const gchar *content)
       xmlNodeSetPtr nodeset = objects->nodesetval;
       for (int i = 0; i < nodeset->nodeNr; i++)
         {
-          ekn_id = xmlGetProp (nodeset->nodeTab[i], "data-soma-job-id");
-          prop = g_strdup_printf ("ekn:///%s", ekn_id);
+          id = xmlGetProp (nodeset->nodeTab[i], "data-soma-job-id");
+          prop = g_strdup_printf ("ekn:///%s", id);
           xmlSetProp (nodeset->nodeTab[i], "href", prop);
           g_free (prop);
-          xmlFree (ekn_id);
+          xmlFree (id);
 
           /* add default thumbnail */
           xmlAddChild (nodeset->nodeTab[i], xmlCopyNode ((xmlNodePtr) img_node, 2));
