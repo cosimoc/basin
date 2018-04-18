@@ -10,8 +10,8 @@ var Links = new Lang.Class({
         this._links = new Map();
     },
 
-    add: function (link, ekn_id) {
-        this._links.set(link, ekn_id);
+    add(link, id) {
+        this._links.set(link, id);
     },
 
     finish: function () {
