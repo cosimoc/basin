@@ -24,10 +24,12 @@ var Packer = new Lang.Class ({
 
     run: function () {
         print('Writing content');
-        this._json['content'].forEach(this._add_content, this);
+        if (this._json['content'])
+            this._json['content'].forEach(this._add_content, this);
 
         print('Writing sets');
-        this._json['sets'].forEach(this._add_set, this);
+        if (this._json['sets'])
+            this._json['sets'].forEach(this._add_set, this);
 
         print('Writing links');
         let links_hash = this._hashify('link-table');
