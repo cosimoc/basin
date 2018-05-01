@@ -86,9 +86,8 @@ var Index = new Lang.Class({
         doc.add_term_full(EXACT_TITLE_PREFIX + exact_title, EXACT_WEIGHT);
         doc.add_term_full(CONTENT_TYPE_PREFIX + content_type, DEFAULT_WEIGHT);
 
-        metadata['tags'].forEach((tag) => {
-            doc.add_boolean_term(TAG_PREFIX + tag);
-        });
+        if (metadata['tags'])
+            metadata['tags'].forEach(tag => doc.add_boolean_term(TAG_PREFIX + tag));
 
         if ('sequenceNumber' in metadata && metadata['sequenceNumber'] >= 0) {
             doc.add_numeric_value(SEQUENCE_NUMBER_VALUE_NO, metadata['sequenceNumber']);
