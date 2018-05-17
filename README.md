@@ -81,6 +81,18 @@ If you want all the categories to be featured, except for *Sports* then your `ha
 }
 ```
 
+If you want only the *Sports* category and no other automatically generated ones, you can use the `ignore-unlisted` key:
+```json
+{
+  "ignore-unlisted": true,
+  "tags": {
+    "Sports": {
+      "featured": true
+    }
+  }
+}
+```
+
 To structure your content with sub-categories, so that *Sports* is a sub-category of *International*:
 
 ```
@@ -136,3 +148,4 @@ To specify a display order for your categories:
 ```
 
 If the `hatch_sets.json` doesn't exist or is empty then all categories will default to non-featured.
+If you don't want `basin-hatch` to create any sets at all, add `ignore-unlisted` and no tags.
