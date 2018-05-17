@@ -15,6 +15,8 @@ const Incubator = new Lang.Class({
         this._basin_manifest_path = basin_manifest_path;
         this._manifest = this._read_json_file(GLib.build_filenamev([this._hatch_dir, 'hatch_manifest.json']));
         this._sets = this._read_json_file(GLib.build_filenamev([this._hatch_dir, 'hatch_sets.json']));
+        if (this._sets && !('tags' in this._sets))
+            this._sets['tags'] = {};
     },
 
     _read_json_file: function (path) {
@@ -174,6 +176,9 @@ const Incubator = new Lang.Class({
     },
 
     _import_set: function (tag) {
+        if (this._sets && this._sets['ignore-unlisted'] && !(tag in this._sets['tags']))
+            return null;
+
         let basin_metadata = {};
 
         basin_metadata['childTags'] = [tag];
@@ -228,6 +233,8 @@ const Incubator = new Lang.Class({
 
         [...basin_tags].forEach(tag => {
             let set_metadata = this._import_set(tag);
+            if (!set_metadata)
+                return;
 
             if ('thumbnail' in set_metadata) {
                 let thumb_metadata = this._import_set_thumbnail(set_metadata['thumbnail']);
