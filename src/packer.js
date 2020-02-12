@@ -45,7 +45,13 @@ var Packer = new Lang.Class ({
     },
 
     _get_object_type: function (mime_type) {
-        if (mime_type == 'application/pdf' || mime_type === 'text/html') {
+        const article_mime_types = [
+            'application/pdf',
+            'application/x-kolibri-html5-zip',
+            'text/html'
+        ];
+
+        if (article_mime_types.includes(mime_type)) {
             return 'ekn://_vocab/ArticleObject';
 
         } else if (mime_type.startsWith('video')) {
